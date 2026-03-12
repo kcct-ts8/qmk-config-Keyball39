@@ -1,0 +1,45 @@
+name: Build QMK firmware
+
+on:
+  push:
+    paths:
+      - 'config/**'
+      - '.github/workflows/build.yml'
+  pull_request:
+  workflow_dispatch:
+
+env:
+  KEYBOARD: qmk_config_keyball39/v2/splinky
+  KEYMAP: vial
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/qmk/qmk_cli
+
+    steps:
+      - name: Checkout keyboard repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Vial-QMK
+        uses: actions/checkout@v4
+        with:
+          repository: vial-kb/vial-qmk
+          ref: vial
+          path: vial-qmk
+          submodules: recursive
+
+      - name: Link keyboard into Vial-QMK
+        run: ln -s "$GITHUB_WORKSPACE/config" "vial-qmk/keyboards/qmk_config_keyball39"
+
+      - name: Build firmware
+        working-directory: vial-qmk
+        run: qmk compile -kb "$KEYBOARD" -km "$KEYMAP"
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: keyball39-firmware
+          path: vial-qmk/*.uf2
