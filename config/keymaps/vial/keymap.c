@@ -220,6 +220,14 @@ void eeconfig_init_user(void) {
 // ============================================================
 void keyboard_post_init_user(void) {
     user_config.raw1 = eeconfig_read_user();
+
+#ifdef RGB_MATRIX_ENABLE
+    // 起動時にRGBを必ずMultisplash(連波紋)で開始する
+    // _noeeprom版を使うのでEEPROMには書き込まれず、
+    // ユーザーがRGB_MOD等で他のモードに切り替えてもセッション中のみ有効
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
+    rgb_matrix_enable_noeeprom();
+#endif
 }
 
 // ============================================================
