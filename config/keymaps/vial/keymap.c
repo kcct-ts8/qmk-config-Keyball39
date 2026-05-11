@@ -65,6 +65,8 @@ static user_config_t user_config;
 // ============================================================
 enum my_keycodes {
     MY_DUMMY = SAFE_RANGE,
+    RGB_SPL,   // Splash (波紋) モードに切替
+    RGB_MSP,   // MultiSplash (連波紋) モードに切替
 };
 
 // ============================================================
@@ -170,7 +172,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_RGB] = LAYOUT(
         RGB_TOG,  RGB_M_P,  RGB_M_B,  RGB_M_R,  RGB_M_SW,        QK_BOOT,  _______,  _______,  _______,  T_SAVE,
 
-        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        _______,  S_D_MOD,  _______,  _______,  DRG_TOG,
+        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        RGB_MSP,  S_D_MOD,  _______,  _______,  DRG_TOG,
 
         RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_M_K,         DPI_RMOD, EE_CLR,   _______,  DPI_MOD,  _______,
 
@@ -219,6 +221,14 @@ void eeconfig_init_user(void) {
 // ============================================================
 void keyboard_post_init_user(void) {
     user_config.raw1 = eeconfig_read_user();
+
+#ifdef RGB_MATRIX_ENABLE
+    // 起動時のRGBモードを Multisplash (波紋エフェクト) に設定
+    // EEPROMに保存しない (再起動後も元のモードに戻したい場合)
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
+    // EEPROMに保存する場合は ↓ を使う (上の行とどちらか一方)
+    // rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
+#endif
 }
 
 // ============================================================
@@ -247,6 +257,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 eeconfig_update_user(user_config.raw1);
             }
             return false;
+
+#ifdef RGB_MATRIX_ENABLE
+        // Splash (波紋) モードに切替
+        case RGB_SPL:
+            if (record->event.pressed) {
+                rgb_matrix_mode(RGB_MATRIX_SPLASH);
+            }
+            return false;
+
+        // MultiSplash (連波紋) モードに切替
+        case RGB_MSP:
+            if (record->event.pressed) {
+                rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
+            }
+            return false;
+#endif
     }
     return true;
 }
