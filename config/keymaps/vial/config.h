@@ -85,9 +85,14 @@
 // === Dragscroll DPI (DRGSCRLキーホールド時のスクロール速度) ===
 // 値が小さいほどスクロールが繊細になる
 #undef  CHARYBDIS_MINIMUM_DRAGSCROLL_DPI
-#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 100
+#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 40
 #undef  CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP
-#define CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP 20
+#define CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP 10
+// 参考値:
+//   30  : かなり遅い (細かい調整向け)
+//   40  : 推奨 (ゆっくり目)
+//   60  : 中速
+//   100 : デフォルト (元の値)
 
 // ============================================================
 // RGB Matrix - 波紋(Splash)エフェクト有効化
