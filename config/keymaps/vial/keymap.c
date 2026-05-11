@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // ============================================================
 // タッピング・ホールド設定
-// #undef で既存定義をクリアしてから再定義する
 // ============================================================
 #undef  TAPPING_TERM
 #define TAPPING_TERM 200
@@ -33,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ============================================================
 // レイヤー定義 (0〜5)
 //   0: Base   QWERTY + Home Row Mods + LNG2
-//   1: Mouse  マウス操作・メディア (TG(1)でトグル)
+//   1: Mouse  マウス操作・メディア (L5ホールドで起動)
 //   2: Symbol 記号
 //   3: RGB    RGB・各種設定
 //   4: Number 数字・ファンクション
@@ -65,7 +64,7 @@ static user_config_t user_config;
 // カスタムキーコード
 // ============================================================
 enum my_keycodes {
-    MY_DUMMY = SAFE_RANGE, // 予備
+    MY_DUMMY = SAFE_RANGE,
 };
 
 // ============================================================
@@ -85,19 +84,19 @@ enum my_keycodes {
 // 【親指(左)】
 //   L1: LT(RGB, BSPC)     タップ=BS     ホールド=Layer3(RGB)
 //   L2: LT(SYM, ESC)      タップ=ESC    ホールド=Layer2(Symbol)
-//   L3: TG(MOUSE)         押すたびにマウスレイヤーON/OFF  ★真ん中
-//   L4: LSFT_T(LNG2)      タップ=LNG2   ホールド=Shift  ★Keyball44から移植
-//   L5: LT(NUM, SPC)      タップ=Space  ホールド=Layer4(Number)
-//   L6: KC_LALT           Alt (AltはHRMのS=Altでも使用可)
+//   L3: TG(NUMBER)        押すたびに数字レイヤーON/OFF  ★真ん中
+//   L4: LSFT_T(LNG2)      タップ=LNG2   ホールド=Shift
+//   L5: LT(MOUSE, SPC)    タップ=Space  ホールド=Layer1(Mouse)
+//   L6: KC_LALT           Alt
 //
 // 【親指(右)】
 //   R1: LT(NUMPAD, MINS)  タップ=-      ホールド=Layer5(Numpad)
 //   R2: LT(SYM, ENT)      タップ=Enter  ホールド=Layer2(Symbol)
 //   R3: LT(RGB, LBRC)     タップ=[      ホールド=Layer3(RGB)
 //
-// 【スクロールモード】
-//   DRGSCRL: ホールドでドラッグスクロール (Charybdisのキーコード)
-//   SNIPING: ホールドで低DPI精密モード
+// 【精密モード/スクロール (マウスレイヤー上)】
+//   SNIPING: ホールドで低DPI精密モード (Dキー)
+//   DRGSCRL: ホールドでドラッグスクロール
 // ============================================================
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -111,15 +110,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
         KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,        KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,
 
-        LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), LT(LAYER_NUMBER), LSFT_T(KC_LNG2), LT(LAYER_MOUSE, KC_SPC), KC_LALT,
+        LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), TG(LAYER_NUMBER), LSFT_T(KC_LNG2), LT(LAYER_MOUSE, KC_SPC), KC_LALT,
         LT(LAYER_NUMPAD, KC_MINS), LT(LAYER_SYMBOL, KC_ENT), LT(LAYER_RGB, KC_LBRC)
     ),
 
     // =========================================================
     // Layer 1: Mouse / Media
-    // TG(LAYER_MOUSE)でON/OFF (L3=親指真ん中)
-    // SNIPING = 低DPI精密モード (Dキーに配置)
-    // DRGSCRL = ドラッグスクロールモード (ホールド)
+    // L5ホールドで起動, L6位置のTG(MOUSE)でロック(ホールド解放後も維持)
+    // SNIPING (Dキー) = 低DPI精密モード (ホールド中のみ)
+    // DRGSCRL (Kキー位置) = ドラッグスクロールモード (ホールド)
     // =========================================================
     [LAYER_MOUSE] = LAYOUT(
         _______,        SGUI(KC_1),       SGUI(KC_2),       LCTL(SGUI(KC_3)), LCTL(SGUI(KC_4)),        LCTL(KC_T),     KC_F17,           KC_F19,           KC_F18,           KC_F13,
@@ -149,23 +148,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Charybdisキーコード:
     //   DPI_MOD  = デフォルトDPI増加
     //   DPI_RMOD = デフォルトDPI減少
-    //   DRGSCRL  = ドラッグスクロール
+    //   S_D_MOD  = 精密(Sniping)DPI増加
     //   DRG_TOG  = ドラッグスクロールトグル
-    //   SNIPING  = スナイピング(低DPI)モード
-    //   T_SAVE   = 設定をEEPROMに保存
+    //   T_SAVE   = ユーザー設定をEEPROMに保存
+    //   EE_CLR   = EEPROM全クリア (DPI最小値変更後に1回押す)
     // =========================================================
     [LAYER_RGB] = LAYOUT(
         RGB_TOG,  RGB_M_P,  RGB_M_B,  RGB_M_R,  RGB_M_SW,        _______,  _______,  _______,  _______,  T_SAVE,
 
-        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        _______,  _______,  _______,  _______,  DRG_TOG,
+        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        _______,  S_D_MOD,  _______,  _______,  DRG_TOG,
 
-        RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_M_K,        DPI_RMOD, _______,  _______,  DPI_MOD,  _______,
+        RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_M_K,         DPI_RMOD, EE_CLR,   _______,  DPI_MOD,  _______,
 
         _______, _______, _______, _______, _______, _______,        _______, _______, _______
     ),
 
     // =========================================================
     // Layer 4: Number / Function
+    // L3(TG(NUMBER))で出入り
     // =========================================================
     [LAYER_NUMBER] = LAYOUT(
         _______, KC_1,  KC_2,  KC_3,  KC_4,                        KC_5,    KC_6,  KC_7,  KC_8,  KC_9,
@@ -220,14 +220,14 @@ void rgb_matrix_update_pwm_buffers(void);
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
 
-        // OLEDモード切替 (TInfoキー = cat / keyball info の切替)
+        // OLEDモード切替 (cat / keyball info)
         case TInfo:
             if (record->event.pressed) {
                 user_config.is_oled_enabled ^= 1;
             }
             return false;
 
-        // 設定をEEPROMに保存
+        // ユーザー設定をEEPROMに保存
         case T_SAVE:
             if (record->event.pressed) {
                 eeconfig_update_user(user_config.raw1);
