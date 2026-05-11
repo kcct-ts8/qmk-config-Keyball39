@@ -112,7 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
         KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,        KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,
 
-        LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), TG(LAYER_NUMBER), LSFT_T(KC_LNG2), LT(LAYER_MOUSE, KC_SPC), KC_LALT,
+        TG(LAYER_RGB), TG(LAYER_SYMBOL), LT(LAYER_NUMBER, KC_ESC), KC_TAB, MO(LAYER_MOUSE), KC_SPC,
         LT(LAYER_NUMPAD, KC_MINS), LT(LAYER_SYMBOL, KC_ENT), LT(LAYER_RGB, KC_LBRC)
     ),
 
