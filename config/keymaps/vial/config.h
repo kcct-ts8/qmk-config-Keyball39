@@ -89,6 +89,39 @@
 #undef  CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP
 #define CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP 20
 
+// ============================================================
+// RGB Matrix - 波紋(Splash)エフェクト有効化
+//
+// このファイルは config/keymaps/vial/config.h に追記してください
+// (前回のDPI設定と同じファイル、最後の #endif の前に追加)
+// ============================================================
+
+// キー反応(reactive)系エフェクトの有効化
+// これがないと Splash 等が動かないので必須
+#define RGB_MATRIX_KEYREACTIVE_ENABLED
+
+// 波紋エフェクト4種を有効化 (お好みで取捨選択可能)
+#define ENABLE_RGB_MATRIX_SPLASH              // 色相付き波紋 (単発)
+#define ENABLE_RGB_MATRIX_MULTISPLASH         // 色相付き波紋 (連発) ★おすすめ
+#define ENABLE_RGB_MATRIX_SOLID_SPLASH        // 単色波紋 (単発)
+#define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH   // 単色波紋 (連発)
+
+// 参考: 他にも便利な反応系エフェクトがあります
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE    // 押したキーだけ光る
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE           // 押したキーが現在色で光る
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE      // 押したキーと周辺が光る
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE // ↑の複数同時版
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS     // 押したキーから十字に光る
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS     // 押したキーから星型に光る
+
+// ============================================================
+// 起動時のデフォルトを Multisplash にしたい場合、keymap.c の
+// keyboard_post_init_user() に以下を追加:
+//
+//   rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
+//
+// EEPROM保存版にしたい場合は noeeprom なしで:
+// rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
+// ============================================================
 
 #endif  // POINTING_DEVICE_ENABLE
-
