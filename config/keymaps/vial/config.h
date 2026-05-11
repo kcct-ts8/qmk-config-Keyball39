@@ -53,5 +53,42 @@
 // To reverse vertical scroll (macOS “natural” scrolling), define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 #define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 
+
+// ============================================================
+// Pointer DPI設定 (Keyball 44参考)
+//
+// このファイルは config/keymaps/vial/config.h に追記してください
+// (既存のconfig.hの末尾、最後の #endif の前に追加)
+//
+// 反映方法:
+//   1. ファームウェアを書き込み
+//   2. EE_CLRキーで一度EEPROMをクリア (Vialから一時的に割当て)
+//   3. キーボード再起動
+// ============================================================
+
+// === Default DPI (通常モード) ===
+// 1200から開始、DPI_MODで200ずつ増加
+// 1200 → 1400 → 1600 → 1800 → 2000 → 2200 → 2400 → ...
+#undef  CHARYBDIS_MINIMUM_DEFAULT_DPI
+#define CHARYBDIS_MINIMUM_DEFAULT_DPI 1200
+#undef  CHARYBDIS_DEFAULT_DPI_CONFIG_STEP
+#define CHARYBDIS_DEFAULT_DPI_CONFIG_STEP 200
+
+// === Sniping DPI (精密モード - SNIPINGキーホールド時) ===
+// 400から開始、S_D_MODで100ずつ増加
+// 400 → 500 → 600 → 700 → 800 (Keyball44の精密値相当) → ...
+#undef  CHARYBDIS_MINIMUM_SNIPING_DPI
+#define CHARYBDIS_MINIMUM_SNIPING_DPI 400
+#undef  CHARYBDIS_SNIPING_DPI_CONFIG_STEP
+#define CHARYBDIS_SNIPING_DPI_CONFIG_STEP 100
+
+// === Dragscroll DPI (DRGSCRLキーホールド時のスクロール速度) ===
+// 値が小さいほどスクロールが繊細になる
+#undef  CHARYBDIS_MINIMUM_DRAGSCROLL_DPI
+#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 100
+#undef  CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP
+#define CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP 20
+
+
 #endif  // POINTING_DEVICE_ENABLE
 
