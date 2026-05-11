@@ -23,8 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ============================================================
 #undef  TAPPING_TERM
 #define TAPPING_TERM 200
-#undef  TAPPING_TERM_PER_KEY      // ファームウェア側で定義済みのため undef が必要
-#define TAPPING_TERM_PER_KEY
 #undef  QUICK_TAP_TERM
 #define QUICK_TAP_TERM 100
 #undef  HOLD_ON_OTHER_KEY_PRESS
@@ -87,10 +85,10 @@ enum my_keycodes {
 // 【親指(左)】
 //   L1: LT(RGB, BSPC)     タップ=BS     ホールド=Layer3(RGB)
 //   L2: LT(SYM, ESC)      タップ=ESC    ホールド=Layer2(Symbol)
-//   L3: LT(MSE, LALT)     タップ=Alt    ホールド=Layer1(Mouse)
+//   L3: TG(MOUSE)         押すたびにマウスレイヤーON/OFF  ★真ん中
 //   L4: LSFT_T(LNG2)      タップ=LNG2   ホールド=Shift  ★Keyball44から移植
 //   L5: LT(NUM, SPC)      タップ=Space  ホールド=Layer4(Number)
-//   L6: TG(MOUSE)         押すたびにマウスレイヤーON/OFF
+//   L6: KC_LALT           Alt (AltはHRMのS=Altでも使用可)
 //
 // 【親指(右)】
 //   R1: LT(NUMPAD, MINS)  タップ=-      ホールド=Layer5(Numpad)
@@ -116,22 +114,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,
         KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,
 
-        LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), LT(LAYER_MOUSE, KC_LALT), LSFT_T(KC_LNG2), LT(LAYER_NUMBER, KC_SPC), TG(LAYER_MOUSE),
+        LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), TG(LAYER_MOUSE), LSFT_T(KC_LNG2), LT(LAYER_NUMBER, KC_SPC), KC_LALT,
         LT(LAYER_NUMPAD, KC_MINS), LT(LAYER_SYMBOL, KC_ENT), LT(LAYER_RGB, KC_LBRC)
     ),
 
     // =========================================================
     // Layer 1: Mouse / Media
-    // TG(LAYER_MOUSE)でON/OFF, 各ホールドキーで一時起動
-    // SNIPING  = 低DPI精密モード (ホールド)
-    // SNP_TOG  = 精密モードトグル
-    // DRGSCRL  = ドラッグスクロールモード (ホールド)
+    // TG(LAYER_MOUSE)でON/OFF (L3=親指真ん中)
+    // SNIPING = 低DPI精密モード (Dキーに配置)
+    // DRGSCRL = ドラッグスクロールモード (ホールド)
     // =========================================================
     [LAYER_MOUSE] = LAYOUT(
         _______,        SGUI(KC_1),       SGUI(KC_2),       LCTL(SGUI(KC_3)), LCTL(SGUI(KC_4)),
         LCTL(KC_T),     KC_F17,           KC_F19,           KC_F18,           KC_F13,
 
-        SNIPING,        SNP_TOG,          _______,          LALT(KC_C),       LCTL(SGUI(KC_D)),
+        _______,        _______,          SNIPING,          LALT(KC_C),       LCTL(SGUI(KC_D)),
         KC_F15,         KC_BSPC,          KC_MS_BTN1,       DRGSCRL,          KC_MS_BTN2,
 
         _______,        _______,          _______,          _______,          LCTL(LALT(KC_SPC)),
@@ -217,52 +214,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
-// ============================================================
-// キーごとのTapping Term
-// ============================================================
-uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        // Home Row Mods: ロール誤爆防止のため長めに
-        case GUI_T(KC_A):
-        case ALT_T(KC_S):
-        case CTL_T(KC_D):
-        case SFT_T(KC_F):
-        case SFT_T(KC_J):
-        case CTL_T(KC_K):
-        case ALT_T(KC_L):
-            return 220;
-
-        // 親指LTキー・LNG2: 素早い切替を優先して短く
-        case LT(LAYER_RGB, KC_BSPC):
-        case LT(LAYER_SYMBOL, KC_ESC):
-        case LT(LAYER_MOUSE, KC_LALT):
-        case LT(LAYER_NUMBER, KC_SPC):
-        case LT(LAYER_NUMPAD, KC_MINS):
-        case LT(LAYER_SYMBOL, KC_ENT):
-        case LT(LAYER_RGB, KC_LBRC):
-        case LSFT_T(KC_LNG2):
-            return 150;
-
-        // 右手小指LT(;): やや長く
-        case LT(LAYER_MOUSE, KC_SCLN):
-            return 200;
-
-        default:
-            return TAPPING_TERM;
-    }
 }
 
-// ============================================================
-// HOLD_ON_OTHER_KEY_PRESS の個別制御
-// KはCombo(J+K→Esc)と競合するため無効化
-// ============================================================
-bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case CTL_T(KC_K):
-            return false;
-        default:
-            return true;
-    }
 }
 
 // ============================================================
@@ -311,20 +264,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-// ============================================================
-// コンボ設定 (J + K → Esc)
-// ============================================================
-#ifdef COMBO_ENABLE
-enum combos {
-    CMB_ESC,
-};
-
-const uint16_t PROGMEM combo_esc[] = {SFT_T(KC_J), CTL_T(KC_K), COMBO_END};
-
-combo_t key_combos[] = {
-    [CMB_ESC] = COMBO(combo_esc, KC_ESC),
-};
-#endif
 
 // ============================================================
 // OLED表示 (Keyball 44から移植)
