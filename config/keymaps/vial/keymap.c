@@ -65,6 +65,8 @@ static user_config_t user_config;
 // ============================================================
 enum my_keycodes {
     MY_DUMMY = SAFE_RANGE,
+    RGB_SPL,   // Splash (波紋) モードに切替
+    RGB_MSP,   // MultiSplash (連波紋) モードに切替
 };
 
 // ============================================================
@@ -233,6 +235,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 eeconfig_update_user(user_config.raw1);
             }
             return false;
+
+#ifdef RGB_MATRIX_ENABLE
+        // Splash (波紋) モードに切替
+        case RGB_SPL:
+            if (record->event.pressed) {
+                rgb_matrix_mode(RGB_MATRIX_SPLASH);
+            }
+            return false;
+
+        // MultiSplash (連波紋) モードに切替
+        case RGB_MSP:
+            if (record->event.pressed) {
+                rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
+            }
+            return false;
+#endif
     }
     return true;
 }
