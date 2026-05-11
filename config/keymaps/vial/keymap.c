@@ -106,12 +106,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_BASE] = LAYOUT(
         KC_Q,        KC_W,        KC_E,        KC_R,        KC_T,        KC_Y,        KC_U,        KC_I,        KC_O,        KC_P,
 
-        GUI_T(KC_A), ALT_T(KC_S), CTL_T(KC_D), SFT_T(KC_F), KC_G,        KC_H,        SFT_T(KC_J), CTL_T(KC_K), ALT_T(KC_L), LT(LAYER_MOUSE, KC_SCLN),
+        GUI_T(KC_A), ALT_T(KC_S), CTL_T(KC_D), SFT_T(KC_F), KC_G,        KC_H,        SFT_T(KC_J), CTL_T(KC_K), ALT_T(KC_L), GUI_T(KC_SCLN),
 
         KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,        KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,
 
-        LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), TG(LAYER_NUMBER), LSFT_T(KC_LNG2), LT(LAYER_MOUSE, KC_SPC), KC_LALT,
-        LT(LAYER_NUMPAD, KC_MINS), LT(LAYER_SYMBOL, KC_ENT), LT(LAYER_RGB, KC_LBRC)
+        LT(LAYER_NUMBER, KC_LALT), LT(LAYER_RGB, KC_BSPC), LT(LAYER_SYMBOL, KC_ESC), LT(1, KC_LALT), LT(LAYER_MOUSE, KC_SPC), LT(LAYER_NUMBER,, KC_SPC),         LT(LAYER_NUMPAD, KC_MINS), LT(LAYER_SYMBOL, KC_ENT), LT(LAYER_RGB, KC_LBRC)
     ),
 
     // =========================================================
@@ -121,13 +120,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // DRGSCRL (Kキー位置) = ドラッグスクロールモード (ホールド)
     // =========================================================
     [LAYER_MOUSE] = LAYOUT(
-        _______,        SGUI(KC_1),       SGUI(KC_2),       LCTL(SGUI(KC_3)), LCTL(SGUI(KC_4)),        LCTL(KC_T),     KC_F17,           KC_F19,           KC_F18,           KC_F13,
+        SGUI(KC_1),       SGUI(KC_2),       LCTL(SGUI(KC_3)), LCTL(SGUI(KC_4)),        LCTL(KC_T),     KC_F17,           KC_F19,           KC_F18,           KC_F13,    KC_F12,    
 
-        _______,        _______,          SNIPING,          LALT(KC_C),       LCTL(SGUI(KC_D)),        KC_F15,         KC_BSPC,          KC_MS_BTN1,       DRGSCRL,          KC_MS_BTN2,
+        _______,          SNIPING,          LALT(KC_C),       LCTL(SGUI(KC_D)),        KC_F15,         KC_BSPC,          KC_MS_BTN1,       DRGSCRL,          KC_MS_BTN2,  KC_F16,    
 
-        _______,        _______,          _______,          _______,          LCTL(LALT(KC_SPC)),        KC_VOLD,        KC_VOLU,          KC_MS_BTN3,       KC_MUTE,          _______,
-
-        _______, _______, _______, _______, _______, TG(LAYER_MOUSE),        _______, _______, _______
+        _______,          _______,          _______,          LCTL(LALT(KC_SPC)),        KC_VOLD,        KC_VOLU,          KC_MS_BTN3,       KC_MUTE,          _______, _______,
+ 
+        _______, _______, _______, _______, _______, _______,        _______, _______, _______
     ),
 
     // =========================================================
