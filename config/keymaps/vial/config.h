@@ -136,7 +136,7 @@
 //   10〜12 : やや遅め (おすすめスタート地点)
 //   16〜20 : 明確にゆっくり (じっくり読書向け)
 //   30以上 : かなり重い (繊細な調整用)
-#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 12
+#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 18
  
  
 // ── スクロール時のセンサーDPI (補助的) ──
