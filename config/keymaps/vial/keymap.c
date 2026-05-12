@@ -238,13 +238,10 @@ void keyboard_post_init_user(void) {
     user_config.raw1 = eeconfig_read_user();
 
 #ifdef RGB_MATRIX_ENABLE
-    // 起動時にRGBを必ず SOLID_MULTISPLASH (単色連波紋) で開始する
+    // 起動時にRGBを必ずMultisplash(連波紋)で開始する
     // _noeeprom版を使うのでEEPROMには書き込まれず、
     // ユーザーがRGB_MOD等で他のモードに切り替えてもセッション中のみ有効
-    //
-    // SOLID_MULTISPLASHは色相変化なし、設定したHUE一色のグラデーション
-    // (MULTISPLASHはカラフルだが、SOLIDは穏やかな水面の質感)
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_MULTISPLASH);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
     rgb_matrix_enable_noeeprom();
 #endif
 }
@@ -277,17 +274,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
 
 #ifdef RGB_MATRIX_ENABLE
-        // Solid Splash (単色波紋・単発) モードに切替
+        // Splash (波紋) モードに切替
         case RGB_SPL:
             if (record->event.pressed) {
-                rgb_matrix_mode(RGB_MATRIX_SOLID_SPLASH);
+                rgb_matrix_mode(RGB_MATRIX_SPLASH);
             }
             return false;
 
-        // Solid MultiSplash (単色連波紋) モードに切替
+        // MultiSplash (連波紋) モードに切替
         case RGB_MSP:
             if (record->event.pressed) {
-                rgb_matrix_mode(RGB_MATRIX_SOLID_MULTISPLASH);
+                rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
             }
             return false;
 #endif
