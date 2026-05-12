@@ -112,7 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
         KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,        KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,
 
-        TG(LAYER_RGB), TG(LAYER_SYMBOL), LT(LAYER_NUMBER, KC_ESC), KC_TAB, MO(LAYER_MOUSE), LT(LAYER_NUMBER, KC_SPC),
+        TG(LAYER_RGB), TG(LAYER_NUMPAD), LT(LAYER_NUMBER, KC_ESC), KC_TAB, MO(LAYER_MOUSE), LT(LAYER_NUMBER, KC_SPC),
         LT(LAYER_NUMPAD, KC_MINS), LT(LAYER_SYMBOL, KC_ENT), LT(LAYER_RGB, KC_LBRC)
     ),
 
@@ -196,9 +196,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Layer 5: Numpad
     // =========================================================
     [LAYER_NUMPAD] = LAYOUT(
-        _______, _______, _______, _______, _______,            KC_PEQL, KC_P1,   KC_P2,   KC_P3,   KC_PPLS,
+        KC_Q,    KC_W,    KC_E,    KC_R,    _______,            KC_PEQL, KC_P1,   KC_P2,   KC_P3,   KC_PPLS,
 
-        _______, _______, _______, _______, _______,            KC_PMNS, KC_P4,   KC_P5,   KC_P6,   KC_PMNS,
+        KC_A,    KC_S,    KC_D,    KC_F,    _______,            KC_PMNS, KC_P4,   KC_P5,   KC_P6,   KC_PMNS,
 
         _______, _______, _______, _______, _______,            KC_PAST, KC_P7,   KC_P8,   KC_P9,   KC_PSLS,
 
