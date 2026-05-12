@@ -127,7 +127,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
         KC_F22, _______, SNIPING, LCTL(SGUI(KC_D)), KC_F15,                             KC_BSPC, KC_MS_BTN1, DRGSCRL, KC_MS_BTN2, KC_F16,
 
-        KC_F23, _______, _______, _______, KC_F14,                                       KC_VOLU,KC_VOLU, KC_MS_BTN3, KC_MUTE, _______,
+        KC_F23, _______, _______, _______, KC_F14,                                       KC_VOLD,KC_VOLU, KC_MS_BTN3, KC_MUTE, _______,
 
         _______, _______, _______, _______, _______, _______,        _______, _______, _______
     ),
