@@ -45,6 +45,7 @@ enum keyball39_layers {
     LAYER_RGB    = 3,
     LAYER_NUMBER = 4,
     LAYER_NUMPAD = 5,
+    LAYER_GAME   = 6,
 };
 
 // ============================================================
@@ -188,11 +189,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     //   EE_CLR   = EEPROM全クリア (DPI最小値変更後に1回押す)
     // =========================================================
     [LAYER_RGB] = LAYOUT(
-        RGB_TOG,  RGB_M_P,  RGB_M_B,  RGB_M_R,  RGB_M_SW,        QK_BOOT,  _______,  TInfo,    _______,  T_SAVE,
+        RGB_TOG,  RGB_M_P,  RGB_M_B,  RGB_M_R,  RGB_M_SW,        QK_BOOT,  _______,        TInfo,    _______,  T_SAVE,
 
-        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        RGB_MSP,  S_D_MOD,  _______,  _______,  USR_DTG,
+        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        RGB_MSP,  S_D_MOD,        TG(LAYER_GAME),  _______,  USR_DTG,
 
-        RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_M_K,         DPI_RMOD, EE_CLR,   _______,  DPI_MOD,  _______,
+        RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_M_K,         DPI_RMOD, EE_CLR,         _______,  DPI_MOD,  _______,
 
         _______, _______, _______, _______, _______, _______,        _______, _______, _______
     ),
@@ -212,16 +213,48 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     // =========================================================
-    // Layer 5: Numpad
+    // Layer 5: Numpad (純粋なテンキー)
+    // 右手側のみテンキー、左手側は透過 (Baseレイヤーの動作が継続)
     // =========================================================
     [LAYER_NUMPAD] = LAYOUT(
-        KC_Q,    KC_W,    KC_E,    KC_R,    _______,            KC_PEQL, KC_P1,   KC_P2,   KC_P3,   KC_PPLS,
+        _______, _______, _______, _______, _______,        KC_PEQL, KC_P1,   KC_P2,   KC_P3,   KC_PPLS,
 
-        KC_A,    KC_S,    KC_D,    KC_F,    _______,            KC_PMNS, KC_P4,   KC_P5,   KC_P6,   KC_PMNS,
+        _______, _______, _______, _______, _______,        KC_PMNS, KC_P4,   KC_P5,   KC_P6,   KC_PMNS,
 
-        _______, _______, _______, _______, _______,            KC_PAST, KC_P7,   KC_P8,   KC_P9,   KC_PSLS,
+        _______, _______, _______, _______, _______,        KC_PAST, KC_P7,   KC_P8,   KC_P9,   KC_PSLS,
 
         _______, _______, _______, _______, _______, _______,   KC_P0,   KC_PDOT, _______
+    ),
+
+    // =========================================================
+    // Layer 6: Game (ゲーム用 - HRMなしのQWERTY配列)
+    //
+    // 通常のBaseレイヤーはHomeRowMods(A/S/D/F/J/K/L/;)があるため
+    // ゲーム中に "Shift+A" などが意図せず発火する問題がある
+    // このレイヤーはHRMを除いた素直なQWERTY配列でゲームプレイ向け
+    //
+    // 入り方: Layer 3 (RGB) → Kキー位置の TG(LAYER_GAME) を押す
+    // 抜け方: 左親指 L1 (TG_GAME) を押す
+    //
+    // 親指の割当:
+    //   L1: TG(LAYER_GAME) [ゲーム終了]
+    //   L2: KC_TAB         [インベントリ/メニュー]
+    //   L3: KC_ESC         [一時停止/戻る]
+    //   L4: KC_LSFT        [スプリント/全力疾走]
+    //   L5: KC_SPC         [ジャンプ]
+    //   L6: KC_LCTL        [しゃがみ]
+    //   R1: KC_ENT         [決定]
+    //   R2: KC_BSPC        [削除/戻る]
+    //   R3: KC_LALT        [代替アクション]
+    // =========================================================
+    [LAYER_GAME] = LAYOUT(
+        KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,        KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,
+
+        KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,
+
+        KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,
+
+        TG(LAYER_GAME), KC_TAB, KC_ESC, KC_LSFT, KC_SPC, KC_LCTL,        KC_ENT, KC_BSPC, KC_LALT
     ),
 };
 // ============================================================
@@ -630,6 +663,7 @@ static void slave_data(void) {
         case LAYER_RGB:    oled_write("RGB  ", false); break;
         case LAYER_NUMBER: oled_write("Num  ", false); break;
         case LAYER_NUMPAD: oled_write("Npad ", false); break;
+        case LAYER_GAME:   oled_write("Game ", false); break;
         default:           oled_write("?????", false); break;
     }
 
