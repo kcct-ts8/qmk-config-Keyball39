@@ -70,6 +70,30 @@ enum my_keycodes {
 };
 
 // ============================================================
+// コンボ (Combo) 定義 - 複数キー同時押しで別のキーを発火
+//
+// 注意: Vialの動的コンボとは併用できないため、
+//   rules.mk で VIAL_COMBO_ENABLE = no が必要
+// 判定時間は config.h の COMBO_TERM (40ms推奨) で調整
+//
+// HRM (Home Row Mods) と両立させるため、コンボに使う
+// J/Kキーは HRM版 (SFT_T(KC_J), CTL_T(KC_K)) を指定する
+// ============================================================
+enum combo_events {
+    JK_ESC,         // J + K → ESC
+    COMBO_LENGTH,
+};
+uint16_t COMBO_LEN = COMBO_LENGTH;
+
+// 各コンボの構成キー (COMBO_ENDで終端)
+const uint16_t PROGMEM jk_combo[] = {SFT_T(KC_J), CTL_T(KC_K), COMBO_END};
+
+// コンボ定義テーブル
+combo_t key_combos[] = {
+    [JK_ESC] = COMBO(jk_combo, KC_ESC),
+};
+
+// ============================================================
 // キーマップ定義
 //
 // v2/splinky (Charybdisベース) のLAYOUTマクロ:
@@ -221,10 +245,13 @@ void keyboard_post_init_user(void) {
     user_config.raw1 = eeconfig_read_user();
 
 #ifdef RGB_MATRIX_ENABLE
-    // 起動時にRGBを必ずMultisplash(連波紋)で開始する
+    // 起動時にRGBを必ず SOLID_MULTISPLASH (単色連波紋) で開始する
     // _noeeprom版を使うのでEEPROMには書き込まれず、
     // ユーザーがRGB_MOD等で他のモードに切り替えてもセッション中のみ有効
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
+    //
+    // SOLID_MULTISPLASHは色相変化なし、設定したHUE一色のグラデーション
+    // (MULTISPLASHはカラフルだが、SOLIDは穏やかな水面の質感)
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_MULTISPLASH);
     rgb_matrix_enable_noeeprom();
 #endif
 }
@@ -257,17 +284,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
 
 #ifdef RGB_MATRIX_ENABLE
-        // Splash (波紋) モードに切替
+        // Solid Splash (単色波紋・単発) モードに切替
         case RGB_SPL:
             if (record->event.pressed) {
-                rgb_matrix_mode(RGB_MATRIX_SPLASH);
+                rgb_matrix_mode(RGB_MATRIX_SOLID_SPLASH);
             }
             return false;
 
-        // MultiSplash (連波紋) モードに切替
+        // Solid MultiSplash (単色連波紋) モードに切替
         case RGB_MSP:
             if (record->event.pressed) {
-                rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
+                rgb_matrix_mode(RGB_MATRIX_SOLID_MULTISPLASH);
             }
             return false;
 #endif
