@@ -86,17 +86,31 @@
 #undef  CHARYBDIS_SNIPING_DPI_CONFIG_STEP
 #define CHARYBDIS_SNIPING_DPI_CONFIG_STEP 100
 
-// === Dragscroll DPI (DRGSCRLキーホールド時のスクロール速度) ===
-// 値が小さいほどスクロールが繊細になる
+// ============================================================
+// スクロール速度をもう少し遅く・じっくりにする調整
+// 
+// パス: config/keymaps/vial/config.h に追記または既存定義を上書き
+// ============================================================
+ 
+// ── スクロール累積バッファ ──
+// ボールの動きが BUFFER_SIZE 単位を超えたら 1 ノッチ分スクロールイベントを出す
+// 大きいほど「重い・じっくり」、小さいほど「軽い・素早い」
+//
+// デフォルト: 6
+// 推奨値:
+//   10〜12 : やや遅め (おすすめスタート地点)
+//   16〜20 : 明確にゆっくり (じっくり読書向け)
+//   30以上 : かなり重い (繊細な調整用)
+#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 12
+ 
+ 
+// ── スクロール時のセンサーDPI (補助的) ──
+// 既存の設定。これも下げるとさらに遅くなる
+// ただし下げすぎるとボールが「効かない」感じになる
+//
+// 推奨範囲: 10〜50
 #undef  CHARYBDIS_MINIMUM_DRAGSCROLL_DPI
-#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 20
-#undef  CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP
-#define CHARYBDIS_DRAGSCROLL_DPI_CONFIG_STEP 10
-// 参考値:
-//   30  : かなり遅い (細かい調整向け)
-//   40  : 推奨 (ゆっくり目)
-//   60  : 中速
-//   100 : デフォルト (元の値)
+#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 30     // 40→30 (若干下げ)
 
 // ============================================================
 // RGB Matrix - 波紋(Splash)エフェクト有効化
