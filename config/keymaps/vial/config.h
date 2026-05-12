@@ -53,10 +53,45 @@
 // To reverse vertical scroll (macOS “natural” scrolling), define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 #define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 
-
+// ============================================================
 // JK同時押しの判定窓 (ms)
 // 短くするとHRMと両立しやすい (TAPPING_TERM=200より十分小さく)
+// ============================================================
 #define COMBO_TERM 40
+
+
+// ============================================================
+// USB接続側を自動的にマスターにする設定
+//
+// これで左右どちらにUSBを挿してもマスター/スレーブが
+// 自動で切り替わり、トラックボールが両方向で使えるようになります
+//
+// 追加先: config/keymaps/vial/config.h の末尾(#endif の直前)
+// ============================================================
+ 
+// ── USB接続検出によるマスター自動判定 ──
+// USBがある側がマスターになる(電源投入時に判定)
+// MASTER_LEFT や MASTER_RIGHT より優先される
+#define SPLIT_USB_DETECT
+ 
+// USB検出タイムアウト (ms)
+// この時間内にUSB enumerationが完了しない側はスレーブと判定される
+// デフォルトは2000ms。短いほうが起動が速いが、確実性を優先するなら長め
+#define SPLIT_USB_TIMEOUT 2000
+ 
+// ── スプリット間のポインティングデバイスデータ共有 ──
+// トラックボールが片側にあり、もう片側がマスターになった時、
+// スプリットリンク経由でボールのデータをマスターへ送る
+//
+// すでに有効化されている可能性が高いが、念のため明示
+#define SPLIT_POINTING_ENABLE
+
+// トラックボールのI2C初期化を両側で実行する保険
+#define POINTING_DEVICE_TASK_THROTTLE_MS 1
+
+// Charybdisのポインティング処理を確実に
+#undef POINTING_DEVICE_RIGHT
+#define POINTING_DEVICE_RIGHT
 
 // ============================================================
 // Pointer DPI設定 (Keyball 44参考)
