@@ -70,28 +70,21 @@ enum my_keycodes {
 };
 
 // ============================================================
-// コンボ (Combo) 定義 - 複数キー同時押しで別のキーを発火
+// コンボ (Combo) 設定について
 //
-// 注意: Vialの動的コンボとは併用できないため、
-//   rules.mk で VIAL_COMBO_ENABLE = no が必要
-// 判定時間は config.h の COMBO_TERM (40ms推奨) で調整
+// このVialフォークではVialが key_combos[] 配列を常時定義する仕様のため、
+// keymap.c で静的にコンボを定義するとリンクエラーになります。
 //
-// HRM (Home Row Mods) と両立させるため、コンボに使う
-// J/Kキーは HRM版 (SFT_T(KC_J), CTL_T(KC_K)) を指定する
+// コンボの追加・編集は Vial GUI から行ってください:
+//   1. Vialアプリを起動
+//   2. 上部メニュー: Combos タブ
+//   3. 空きスロットにキー組合せと出力キーコードを設定
+//      例: KC_J + KC_K → KC_ESC
+//   4. 保存 (Vialアプリ内で自動保存)
+//
+// 注意: Vialのコンボ設定はEEPROMに保存されるため、
+// EE_CLR を実行すると消えます。その場合は再度設定が必要です。
 // ============================================================
-enum combo_events {
-    JK_ESC,         // J + K → ESC
-    COMBO_LENGTH,
-};
-uint16_t COMBO_LEN = COMBO_LENGTH;
-
-// 各コンボの構成キー (COMBO_ENDで終端)
-const uint16_t PROGMEM jk_combo[] = {SFT_T(KC_J), CTL_T(KC_K), COMBO_END};
-
-// コンボ定義テーブル
-combo_t key_combos[] = {
-    [JK_ESC] = COMBO(jk_combo, KC_ESC),
-};
 
 // ============================================================
 // キーマップ定義
