@@ -229,5 +229,12 @@
 //                            0=赤, 43=黄, 85=緑, 128=シアン, 170=青, 213=マゼンタ
 // ============================================================
 
+// Vialの動的コンボを完全に無効化
+// (静的 key_combos[] と衝突するため強制的に0にする)
+#ifdef VIAL_COMBO_ENTRIES
+#undef VIAL_COMBO_ENTRIES
+#endif
+#define VIAL_COMBO_ENTRIES 0
+
 
 #endif  // POINTING_DEVICE_ENABLE
