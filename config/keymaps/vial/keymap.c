@@ -67,6 +67,8 @@ enum my_keycodes {
     MY_DUMMY = SAFE_RANGE,
     RGB_SPL,   // Splash (波紋) モードに切替
     RGB_MSP,   // MultiSplash (連波紋) モードに切替
+    USR_DRG,   // 独自ドラッグスクロール (momentary、ホールド中のみ)
+    USR_DTG,   // 独自ドラッグスクロール (toggle、押すたびにON/OFF)
 };
 
 // ============================================================
@@ -142,7 +144,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_MOUSE] = LAYOUT(
         SGUI(KC_1), SGUI(KC_2), LCTL(SGUI(KC_3)), LCTL(SGUI(KC_4)), LCTL(KC_T),         KC_F17,  KC_F19,     KC_F18,  KC_F13,   KC_F12,
 
-        KC_F22, _______, SNIPING, LCTL(SGUI(KC_D)), KC_F15,                             KC_BSPC, KC_MS_BTN1, DRGSCRL, KC_MS_BTN2, KC_F16,
+        KC_F22, _______, SNIPING, LCTL(SGUI(KC_D)), KC_F15,                             KC_BSPC, KC_MS_BTN1, USR_DRG, KC_MS_BTN2, KC_F16,
 
         KC_F23, _______, _______, _______, KC_F14,                                       KC_VOLD,KC_VOLU, KC_MS_BTN3, KC_MUTE, _______,
 
@@ -188,7 +190,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_RGB] = LAYOUT(
         RGB_TOG,  RGB_M_P,  RGB_M_B,  RGB_M_R,  RGB_M_SW,        QK_BOOT,  _______,  TInfo,    _______,  T_SAVE,
 
-        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        RGB_MSP,  S_D_MOD,  _______,  _______,  DRG_TOG,
+        RGB_MOD,  RGB_HUI,  RGB_SAI,  RGB_VAI,  RGB_M_SN,        RGB_MSP,  S_D_MOD,  _______,  _______,  USR_DTG,
 
         RGB_RMOD, RGB_HUD,  RGB_SAD,  RGB_VAD,  RGB_M_K,         DPI_RMOD, EE_CLR,   _______,  DPI_MOD,  _______,
 
@@ -254,6 +256,12 @@ void rgb_matrix_update_pwm_buffers(void);
 #endif
 
 // ============================================================
+// 独自ドラッグスクロールの状態 (process_record_user で更新される)
+// ============================================================
+static bool user_dragscroll_held     = false;
+static bool user_dragscroll_toggled  = false;
+
+// ============================================================
 // キーイベント処理
 // ============================================================
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -288,8 +296,72 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 #endif
+
+        // ========================================================
+        // 独自ドラッグスクロール
+        // CharybdisのDRGSCRL/DRG_TOGの代替実装
+        //
+        // 利点: master/slave の位置に依存せず動作する
+        //   (USB左右どちらに挿してもスクロール可能)
+        // ========================================================
+        case USR_DRG:
+            // ホールド中だけON (momentary)
+            user_dragscroll_held = record->event.pressed;
+            return false;
+
+        case USR_DTG:
+            // 押すたびにON/OFF (toggle)
+            if (record->event.pressed) {
+                user_dragscroll_toggled = !user_dragscroll_toggled;
+            }
+            return false;
     }
     return true;
+}
+
+// ============================================================
+// ポインティングデバイス処理 (毎ボール更新で呼ばれる)
+//
+// USR_DRG/USR_DTGが有効なときX/Y入力をH/Vスクロールに変換する
+// バッファ蓄積方式で滑らかに、CHARYBDIS_DRAGSCROLL_BUFFER_SIZE で
+// スクロール速度を調整 (大きいほど遅く=重く)
+// ============================================================
+#ifndef CHARYBDIS_DRAGSCROLL_BUFFER_SIZE
+#    define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 6
+#endif
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    bool dragscroll_active = user_dragscroll_held || user_dragscroll_toggled;
+
+    if (dragscroll_active) {
+        // X/Y → H/V 変換 (累積バッファで滑らかに)
+        static int16_t scroll_buffer_x = 0;
+        static int16_t scroll_buffer_y = 0;
+
+        scroll_buffer_x += mouse_report.x;
+        scroll_buffer_y += mouse_report.y;
+
+        mouse_report.h = scroll_buffer_x / CHARYBDIS_DRAGSCROLL_BUFFER_SIZE;
+#ifdef CHARYBDIS_DRAGSCROLL_REVERSE_Y
+        // macOSの「ナチュラルスクロール」と同じ向き
+        mouse_report.v = -(scroll_buffer_y / CHARYBDIS_DRAGSCROLL_BUFFER_SIZE);
+#else
+        mouse_report.v = scroll_buffer_y / CHARYBDIS_DRAGSCROLL_BUFFER_SIZE;
+#endif
+
+        // 余りを保持して次回に持ち越し
+        scroll_buffer_x -= mouse_report.h * CHARYBDIS_DRAGSCROLL_BUFFER_SIZE;
+#ifdef CHARYBDIS_DRAGSCROLL_REVERSE_Y
+        scroll_buffer_y -= -mouse_report.v * CHARYBDIS_DRAGSCROLL_BUFFER_SIZE;
+#else
+        scroll_buffer_y -= mouse_report.v * CHARYBDIS_DRAGSCROLL_BUFFER_SIZE;
+#endif
+
+        // X/Yはゼロにしてカーソルが動かないように
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    }
+    return mouse_report;
 }
 
 
