@@ -54,6 +54,10 @@
 #define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 
 
+// JK同時押しの判定窓 (ms)
+// 短くするとHRMと両立しやすい (TAPPING_TERM=200より十分小さく)
+#define COMBO_TERM 40
+
 // ============================================================
 // Pointer DPI設定 (Keyball 44参考)
 //
@@ -210,5 +214,6 @@
 //   - 色を変えたい         → RGB_MATRIX_DEFAULT_HUE
 //                            0=赤, 43=黄, 85=緑, 128=シアン, 170=青, 213=マゼンタ
 // ============================================================
+
 
 #endif  // POINTING_DEVICE_ENABLE
