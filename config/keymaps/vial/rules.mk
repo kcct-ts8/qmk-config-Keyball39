@@ -8,3 +8,6 @@ EXTRAKEY_ENABLE     = yes
 WPM_ENABLE = yes
 ENCODER_ENABLE = no
 ENCODER_MAP_ENABLE = no
+
+VIAL_COMBO_ENABLE = no    # Vialの動的コンボを無効化
+COMBO_ENABLE = yes        # QMK標準のコンボシステムを有効化(これは元から有効かも)
