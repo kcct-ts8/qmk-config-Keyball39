@@ -136,7 +136,7 @@
 //   10〜12 : やや遅め (おすすめスタート地点)
 //   16〜20 : 明確にゆっくり (じっくり読書向け)
 //   30以上 : かなり重い (繊細な調整用)
-#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 18
+#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 10
  
  
 // ── スクロール時のセンサーDPI (補助的) ──
@@ -145,7 +145,7 @@
 //
 // 推奨範囲: 10〜50
 #undef  CHARYBDIS_MINIMUM_DRAGSCROLL_DPI
-#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 30     // 40→30 (若干下げ)
+#define CHARYBDIS_MINIMUM_DRAGSCROLL_DPI 50     // 40→30 (若干下げ)
 
 // ============================================================
 // RGB Matrix - 波紋(Splash)エフェクト有効化
