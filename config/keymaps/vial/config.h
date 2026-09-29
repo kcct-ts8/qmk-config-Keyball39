@@ -28,13 +28,19 @@
 #endif // VIAL_ENABLE
 #endif     // VIA_ENABLE
 
+// ── OLED 更新レート制限 ── 
+#ifdef OLED_ENABLE
+#    undef  OLED_UPDATE_INTERVAL
+#    define OLED_UPDATE_INTERVAL 100 
+#endif
+
 /* Charybdis-specific features. */
 
 #ifdef POINTING_DEVICE_ENABLE
 // Automatically enable the pointer layer when moving the trackball.  See also:
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS`
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD`
- #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+// #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 // Rotation angle. Only supports -127 to 127.
 #undef ROTATIONAL_TRANSFORM_ANGLE
 #define ROTATIONAL_TRANSFORM_ANGLE 90
